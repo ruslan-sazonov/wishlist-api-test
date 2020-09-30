@@ -1,0 +1,72 @@
+##########################################################
+### Note: use your own values for X-AUTH-TOKEN auth header
+### and resource IDs
+##########################################################
+
+
+#####################
+### Product endpoints
+#####################
+
+### Get product list
+GET /api/product
+Host: localhost:80
+X-AUTH-TOKEN: d1f8d131906fac93ba91eb9920ed8c155a0a343ecfc679fbb0f288455179274b
+
+######################
+### Wishlist endpoints
+######################
+
+### Get list of user's wishlists
+GET /api/wishlist
+Host: localhost:80
+X-AUTH-TOKEN: d1f8d131906fac93ba91eb9920ed8c155a0a343ecfc679fbb0f288455179274b
+
+### Get single wishlist by it's ID
+GET /api/wishlist/1
+Host: localhost:80
+X-AUTH-TOKEN: d1f8d131906fac93ba91eb9920ed8c155a0a343ecfc679fbb0f288455179274b
+
+### Create a brand new shiny wishlist
+POST /api/wishlist
+Host: localhost:80
+X-AUTH-TOKEN: c5e034cf4a91a2c4be5b8ad9e8838420b0f88d6aae5b065f77a87c8fdf6eba6e
+Content-Type: application/json
+
+{
+  "name": "Test 2 Wishlist"
+}
+
+### Delete wishlist by a given ID
+DELETE /api/wishlist/4
+Host: localhost:80
+X-AUTH-TOKEN: d1f8d131906fac93ba91eb9920ed8c155a0a343ecfc679fbb0f288455179274b
+
+### Get list of the attached products by wishlist ID
+GET /api/wishlist/1/products
+Host: localhost:80
+X-AUTH-TOKEN: c5e034cf4a91a2c4be5b8ad9e8838420b0f88d6aae5b065f77a87c8fdf6eba6e
+
+### Attach product to wishlist by given wishlist and product IDs
+PUT /api/wishlist/1/products/9
+Host: localhost:80
+X-AUTH-TOKEN: d1f8d131906fac93ba91eb9920ed8c155a0a343ecfc679fbb0f288455179274b
+
+### Detach product from wishlist by given wishlist and product IDs
+DELETE /api/wishlist/1/products/8
+Host: localhost:80
+X-AUTH-TOKEN: d1f8d131906fac93ba91eb9920ed8c155a0a343ecfc679fbb0f288455179274b
+
+###
+
+
+
+
+
+
+
+
+
+
+
+

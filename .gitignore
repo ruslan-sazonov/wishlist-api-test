@@ -1,0 +1,4 @@
+.idea
+docker/database/data/*
+!docker/database/data/.gitkeep
+docker/logs/*.log
