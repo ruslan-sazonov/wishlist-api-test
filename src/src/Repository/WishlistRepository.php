@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Wishlist;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -49,38 +48,5 @@ class WishlistRepository extends ServiceEntityRepository
         $this->getEntityManager()->flush();
 
         return $entity->getId();
-    }
-
-    /**
-     * @param $value
-     * @param int $limit
-     * @return Wishlist[]
-     */
-    public function findManyByUserId($value, $limit = 100)
-    {
-        return $this->createQueryBuilder('w')
-            ->andWhere('w.userId = :val')
-            ->setParameter('val', $value)
-            ->orderBy('w.id', 'ASC')
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * @param $id
-     * @param $userId
-     * @return Wishlist|null
-     * @throws NonUniqueResultException
-     */
-    public function findOneForUser($id, $userId): ?Wishlist
-    {
-        return $this->createQueryBuilder('w')
-            ->andWhere('w.id = :id')
-            ->andWhere('w.userId = :userId')
-            ->setParameter('id', $id)
-            ->setParameter('userId', $userId)
-            ->getQuery()
-            ->getOneOrNullResult();
     }
 }

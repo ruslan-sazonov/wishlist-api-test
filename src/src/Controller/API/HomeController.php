@@ -2,8 +2,7 @@
 
 namespace App\Controller\API;
 
-use App\Controller\ApiController;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -13,10 +12,11 @@ class HomeController extends ApiController
 {
     /**
      * @Route("/", name="list", methods={"GET"})
+     * @return JsonResponse
      */
-    public function index(Request $request)
+    public function index()
     {
-        return $this->json([
+        return $this->response([
             'description' => 'Welcome to the Wishlist Test API!',
         ]);
     }

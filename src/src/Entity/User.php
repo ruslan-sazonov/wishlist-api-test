@@ -13,6 +13,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface
 {
+    public const DEFAULT_API_ROLE = 'ROLE_API';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -51,16 +53,26 @@ class User implements UserInterface
         $this->wishlists = new ArrayCollection();
     }
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
+    /**
+     * @param string $email
+     * @return $this
+     */
     public function setEmail(string $email): self
     {
         $this->email = $email;
@@ -90,6 +102,10 @@ class User implements UserInterface
         return array_unique($roles);
     }
 
+    /**
+     * @param array $roles
+     * @return $this
+     */
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
@@ -105,6 +121,10 @@ class User implements UserInterface
         return (string) $this->password;
     }
 
+    /**
+     * @param string $password
+     * @return $this
+     */
     public function setPassword(string $password): self
     {
         $this->password = $password;
@@ -129,11 +149,18 @@ class User implements UserInterface
         // $this->plainPassword = null;
     }
 
+    /**
+     * @return string|null
+     */
     public function getApiToken(): ?string
     {
         return $this->apiToken;
     }
 
+    /**
+     * @param string|null $apiToken
+     * @return $this
+     */
     public function setApiToken(?string $apiToken): self
     {
         $this->apiToken = $apiToken;
@@ -149,6 +176,10 @@ class User implements UserInterface
         return $this->wishlists;
     }
 
+    /**
+     * @param Wishlist $wishlist
+     * @return $this
+     */
     public function addWishlist(Wishlist $wishlist): self
     {
         if (!$this->wishlists->contains($wishlist)) {
@@ -159,6 +190,10 @@ class User implements UserInterface
         return $this;
     }
 
+    /**
+     * @param Wishlist $wishlist
+     * @return $this
+     */
     public function removeWishlist(Wishlist $wishlist): self
     {
         if ($this->wishlists->contains($wishlist)) {

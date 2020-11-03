@@ -1,6 +1,6 @@
 <?php
 
-namespace App\ConsoleCommand;
+namespace App\Command;
 
 use App\Entity\User;
 use App\Entity\Wishlist;
@@ -11,11 +11,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class ExportWishlistCommand extends Command
 {
-    const DEFAULT_REPORT_DIRNAME = 'csv_reports';
-    const DEFAULT_REPORT_BASE_NAME = 'users_whislist_';
+    private const DEFAULT_REPORT_DIRNAME = 'csv_reports';
+    private const DEFAULT_REPORT_BASE_NAME = 'users_whislist_';
 
     protected static $defaultName = 'export:wishlist:csv';
     /** @var UserRepository $userRepository */
@@ -24,15 +25,19 @@ class ExportWishlistCommand extends Command
     protected $parameterBag;
     /** @var Filesystem $filesystem */
     protected $filesystem;
+    /** @var SerializerInterface $serializer */
+    protected $serializer;
 
     public function __construct(
         UserRepository $userRepository,
         ParameterBagInterface $parameterBag,
-        Filesystem $filesystem
+        Filesystem $filesystem,
+        SerializerInterface $serializer
     ) {
         $this->userRepository = $userRepository;
         $this->parameterBag = $parameterBag;
         $this->filesystem = $filesystem;
+        $this->serializer = $serializer;
 
         parent::__construct();
     }
@@ -48,19 +53,26 @@ class ExportWishlistCommand extends Command
      * @param OutputInterface $output
      * @return int|void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln("<comment>I'm going to export all wislists for all users who have them to CSV format...</comment>");
 
         try {
             $users = $this->userRepository->findAll();
 
+            if (!$users) {
+                $output->writeln("<comment>No users found. Nothing to process.</comment>");
+
+                return Command::SUCCESS;
+            }
+
             $this->filesystem->mkdir($this->getReportDirPath());
             $csvReportFileName = $this->getReportFileName();
             $csvReportPath = $this->getReportFilePath($csvReportFileName);
 
             foreach ($this->getCsvData($users) as $line) {
-                $this->filesystem->appendToFile($csvReportPath, $line);
+                $serialized = $this->serializer->serialize($line, 'csv', ['delimiter' => ';', 'no_headers' => true]);
+                $this->filesystem->appendToFile($csvReportPath, $serialized);
             }
         } catch (\Exception | IOExceptionInterface $exception) {
             $output->writeln("<error>".$exception->getMessage()."</error>");
@@ -80,7 +92,7 @@ class ExportWishlistCommand extends Command
      * @return \Generator
      * @throws \Exception
      */
-    protected function getCsvData($users)
+    protected function getCsvData($users): \Generator
     {
         /** @var User $user */
         foreach ($users as $user) {
@@ -89,12 +101,11 @@ class ExportWishlistCommand extends Command
 
                 /** @var Wishlist $wishlist */
                 foreach ($iterator as $wishlist) {
-                    yield sprintf(
-                        "%s;%s;%d\r\n",
+                    yield [
                         $user->getUsername(),
                         $wishlist->getName(),
-                        $wishlist->getProducts()->count())
-                    ;
+                        $wishlist->getProducts()->count()
+                    ];
                 }
             }
         }

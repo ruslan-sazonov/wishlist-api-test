@@ -11,7 +11,7 @@ framework:
         cookie_secure: auto
         cookie_samesite: lax
 
-    validation: { enable_annotations: true }
+#    validation: { enable_annotations: true }
 
     #esi: true
     #fragments: true

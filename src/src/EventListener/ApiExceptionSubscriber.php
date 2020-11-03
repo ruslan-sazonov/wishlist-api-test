@@ -1,26 +1,28 @@
 <?php
 
-namespace App\Generic\EventListener;
+namespace App\EventListener;
 
-use App\Generic\Exception\GenericApiException;
-use App\Generic\Serializer\ApiExceptionNormalizer;
+use App\Serializer\Normalizer\ApiExceptionNormalizer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class ApiExceptionSubscriber implements EventSubscriberInterface
 {
+    /** @var ApiExceptionNormalizer $normalizer */
     protected $normalizer;
-
 
     public function __construct(ApiExceptionNormalizer $normalizer)
     {
         $this->normalizer = $normalizer;
     }
 
-    public static function getSubscribedEvents()
+    /**
+     * @return array
+     */
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::EXCEPTION => 'onKernelException',
@@ -35,12 +37,8 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
         $throwable = $event->getThrowable();
         $data = [];
 
-        if ($throwable instanceof GenericApiException) {
+        if ($throwable instanceof HttpExceptionInterface) {
             $data = $this->normalizer->normalize($throwable);
-        } elseif ($throwable instanceof NotFoundHttpException) {
-            $data = [
-                'message' => $throwable->getMessage()
-            ];
         } else {
             return;
         }

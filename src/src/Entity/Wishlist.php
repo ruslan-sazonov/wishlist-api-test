@@ -6,9 +6,20 @@ use App\Repository\WishlistRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=WishlistRepository::class)
+ * @ORM\Table(
+ *      name="wishlist",
+ *      uniqueConstraints={@ORM\UniqueConstraint(columns={"user_id", "name"})}
+ * )
+ * @UniqueEntity(
+ *     fields={"userId", "name"},
+ *     errorPath="name",
+ *     message="Wishlist with requested name already exists for this user."
+ * )
  */
 class Wishlist
 {
@@ -21,21 +32,24 @@ class Wishlist
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotNull()
      */
     private $userId;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $name;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Assert\Type(type="boolean")
      */
     private $isActive;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime_immutable")
      */
     private $createdAt;
 
@@ -55,16 +69,26 @@ class Wishlist
         $this->products = new ArrayCollection();
     }
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return int|null
+     */
     public function getUserId(): ?int
     {
         return $this->userId;
     }
 
+    /**
+     * @param int $userId
+     * @return $this
+     */
     public function setUserId(int $userId): self
     {
         $this->userId = $userId;
@@ -72,11 +96,18 @@ class Wishlist
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
+    /**
+     * @param string $name
+     * @return $this
+     */
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -84,11 +115,18 @@ class Wishlist
         return $this;
     }
 
+    /**
+     * @return bool|null
+     */
     public function getIsActive(): ?bool
     {
         return $this->isActive;
     }
 
+    /**
+     * @param bool $isActive
+     * @return $this
+     */
     public function setIsActive(bool $isActive): self
     {
         $this->isActive = $isActive;
@@ -96,11 +134,18 @@ class Wishlist
         return $this;
     }
 
+    /**
+     * @return \DateTimeInterface|null
+     */
     public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->createdAt;
     }
 
+    /**
+     * @param \DateTimeInterface $createdAt
+     * @return $this
+     */
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
@@ -116,6 +161,10 @@ class Wishlist
         return $this->products;
     }
 
+    /**
+     * @param Product $product
+     * @return $this
+     */
     public function addProduct(Product $product): self
     {
         if (!$this->products->contains($product)) {
@@ -125,6 +174,10 @@ class Wishlist
         return $this;
     }
 
+    /**
+     * @param Product $product
+     * @return $this
+     */
     public function removeProduct(Product $product): self
     {
         if ($this->products->contains($product)) {
@@ -134,11 +187,18 @@ class Wishlist
         return $this;
     }
 
+    /**
+     * @return User|null
+     */
     public function getUser(): ?User
     {
         return $this->user;
     }
 
+    /**
+     * @param User|null $user
+     * @return $this
+     */
     public function setUser(?User $user): self
     {
         $this->user = $user;

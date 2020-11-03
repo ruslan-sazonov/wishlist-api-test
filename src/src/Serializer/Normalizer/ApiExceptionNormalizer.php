@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Generic\Serializer;
+namespace App\Serializer\Normalizer;
 
-use App\Generic\Exception\GenericApiException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class ApiExceptionNormalizer implements NormalizerInterface
 {
     /**
-     * @param GenericApiException $object
+     * @param HttpExceptionInterface $object
      * @param string|null $format
      * @param array $context
      * @return array|\ArrayObject|bool|float|int|string|void|null
@@ -17,13 +17,16 @@ class ApiExceptionNormalizer implements NormalizerInterface
     {
         return [
             'message' => $object->getMessage(),
-            'errors' => $object->getErrors(),
         ];
     }
 
-    public function supportsNormalization($data, string $format = null)
+    /**
+     * @param mixed $data
+     * @param string|null $format
+     * @return bool
+     */
+    public function supportsNormalization($data, string $format = null): bool
     {
-        return $data instanceof GenericApiException;
+        return $data instanceof HttpExceptionInterface;
     }
-
 }

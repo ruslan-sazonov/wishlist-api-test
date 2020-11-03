@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -21,41 +20,34 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("exposed")
      */
     private $id;
 
     /**
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups("exposed")
      */
     private $name;
 
     /**
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Groups("exposed")
      */
     private $sku;
 
     /**
      * @Assert\NotBlank
-     * @Assert\Type(type="integer")
      * @ORM\Column(type="integer")
-     * @Groups("exposed")
      */
     private $price;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups("exposed")
      */
     private $isActive;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups("exposed")
      */
     private $createdAt;
 
@@ -167,31 +159,22 @@ class Product
         return $this;
     }
 
+    /**
+     * @return int|null
+     */
     public function getCreatedBy(): ?int
     {
         return $this->createdBy;
     }
 
+    /**
+     * @param int $createdBy
+     * @return $this
+     */
     public function setCreatedBy(int $createdBy): self
     {
         $this->createdBy = $createdBy;
 
         return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function toArray()
-    {
-        return [
-            'id' => $this->getId(),
-            'name' => $this->getName(),
-            'sku' => $this->getSku(),
-            'price' => $this->getPrice(),
-            'createdBy' => $this->getCreatedBy(),
-            'isActive' => $this->getIsActive(),
-            'createdAt' => $this->getCreatedAt(),
-        ];
     }
 }

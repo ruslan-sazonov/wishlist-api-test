@@ -9,11 +9,14 @@ use Faker\Factory;
 
 class ProductFixtures extends Fixture
 {
+    /**
+     * @param ObjectManager $manager
+     */
     public function load(ObjectManager $manager)
     {
         $faker = Factory::create();
 
-        for ($i = 0; $i <=50; $i++) {
+        for ($i = 0; $i <= 50; $i++) {
             $product = new Product();
             $product->setName(rtrim($faker->sentence(3, false), '.'));
             $product->setSku(strtoupper($faker->unique()->uuid));

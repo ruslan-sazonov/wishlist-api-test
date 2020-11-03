@@ -17,12 +17,16 @@ class UserFixtures extends Fixture
         $this->encoder = $encoder;
     }
 
+    /**
+     * @param ObjectManager $manager
+     * @throws \Exception
+     */
     public function load(ObjectManager $manager)
     {
         for ($i = 1; $i <= 10; $i++) {
             $model = new User();
             $model->setEmail("tester{$i}@gmail.com");
-            $model->setRoles(['ROLE_API']);
+            $model->setRoles([User::DEFAULT_API_ROLE]);
             $model->setPassword($this->encoder->encodePassword($model, "tester{$i}"));
             $model->setApiToken(bin2hex(random_bytes(32)));
             $manager->persist($model);

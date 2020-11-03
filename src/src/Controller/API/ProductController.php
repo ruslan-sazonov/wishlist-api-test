@@ -2,8 +2,7 @@
 
 namespace App\Controller\API;
 
-use App\Controller\ApiController;
-use App\Service\ProductService;
+use App\Repository\ProductRepository;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -11,19 +10,19 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ProductController extends ApiController
 {
-    /** @var ProductService $service */
-    protected $service;
+    /** @var ProductRepository $productRepository */
+    private $productRepository;
 
-    public function __construct(ProductService $service)
+    public function __construct(ProductRepository $productRepository)
     {
-        $this->service = $service;
+        $this->productRepository = $productRepository;
     }
 
     /**
      * @Route("/product", name="list", methods={"GET"})
      */
-    public function listAction()
+    public function list()
     {
-        return $this->json($this->service->getProductList());
+        return $this->response($this->productRepository->findAll());
     }
 }
